@@ -1,5 +1,5 @@
 const https = require('https');
-const CryptoJS = require('crypto');
+const CryptoJS = require('crypto-js');
 
 // 1.アクセストークンの取得
 // 現在時刻の取得
@@ -17,9 +17,26 @@ function calcSign(clientId,access_token,secret,timestamp){
     return signUp;
 }
 
+// アクセストークン用
+function access_calcSign(clientId,secret,timestamp){
+    const str = clientId + timestamp;
+    const hash = CryptoJS.HmacSHA256(str, secret);
+    const hashInBase64 = hash.toString();
+    const signUp = hashInBase64.toUpperCase();
+    return signUp;
+}
+
+// データの取得
+const data_headers = {
+    client_id: "mnytrtcna0j4uh0urkur",
+    access_token: "",//最新のアクセストークンで行うこと
+    sign: "",
+    t: 0,
+    sign_method: "HMAC-SHA256"
+};
+// アクセストークンの取得
 const headers = {
     client_id: "mnytrtcna0j4uh0urkur",
-    access_token: ,//最新のアクセストークンで行うこと
     sign: "",
     t: 0,
     sign_method: "HMAC-SHA256"
@@ -29,7 +46,7 @@ const timestamp = getTime();
 const secret = "117ffe6d7b25413d8dad20f262c1a197";
 const clientId = headers.client_id;
 const access_token = headers.access_token;
-const sign = calcSign(clientId,access_token,secret,timestamp);
+const sign = access_calcSign(clientId,secret,timestamp);
 headers.sign = sign;
 headers.t = timestamp;
 
