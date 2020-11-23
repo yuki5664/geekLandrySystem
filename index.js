@@ -23,6 +23,7 @@ function access_calcSign(clientId, secret, timestamp){
 const headers = {
     client_id: "mnytrtcna0j4uh0urkur",
     sign: "",
+    access_token: "",
     t: 0,
     sign_method: "HMAC-SHA256"
 };
@@ -46,9 +47,11 @@ const options = {
 
 // 叩いて取得したアクセストークンを変数にいれる
 const req = https.request(options, (res) => {
+    let data = '';
     res.on('data', (chunk) => {
-        console.log(`BODY: ${chunk}`);
-        console.log
+        data += chunk;
+        const obj = JSON.parse(data);
+        const access_token = obj.result.access_token;
     });
     res.on('end', () => {
         console.log('No more data in response.');
@@ -60,7 +63,6 @@ req.on('error', (e) => {
 });
 
 req.end();
-
 
 // 電流データの取得用
 function calcSign(clientId, access_token, secret, timestamp){
