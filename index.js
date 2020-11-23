@@ -1,6 +1,7 @@
 const https = require('https');
 const CryptoJS = require('crypto-js');
 
+// TODO: 2時間に一回、アクセストークンを取得する
 // 1.アクセストークンの取得
 // 現在時刻の取得
 function getTime(){
@@ -8,17 +9,9 @@ function getTime(){
     return timestamp;
 }
 
-// アクセスに必要な部分をまとめる
-function calcSign(clientId,access_token,secret,timestamp){
-    const str = clientId + access_token + timestamp;
-    const hash = CryptoJS.HmacSHA256(str, secret);
-    const hashInBase64 = hash.toString();
-    const signUp = hashInBase64.toUpperCase();
-    return signUp;
-}
 
 // アクセストークン用
-function access_calcSign(clientId,secret,timestamp){
+function access_calcSign(clientId, secret, timestamp){
     const str = clientId + timestamp;
     const hash = CryptoJS.HmacSHA256(str, secret);
     const hashInBase64 = hash.toString();
@@ -26,14 +19,6 @@ function access_calcSign(clientId,secret,timestamp){
     return signUp;
 }
 
-// データの取得
-const data_headers = {
-    client_id: "mnytrtcna0j4uh0urkur",
-    access_token: "",//最新のアクセストークンで行うこと
-    sign: "",
-    t: 0,
-    sign_method: "HMAC-SHA256"
-};
 // アクセストークンの取得
 const headers = {
     client_id: "mnytrtcna0j4uh0urkur",
@@ -63,6 +48,7 @@ const options = {
 const req = https.request(options, (res) => {
     res.on('data', (chunk) => {
         console.log(`BODY: ${chunk}`);
+        console.log
     });
     res.on('end', () => {
         console.log('No more data in response.');
@@ -75,4 +61,21 @@ req.on('error', (e) => {
 
 req.end();
 
-// 2時間に一回、refresh tokeを取得する
+
+// 電流データの取得用
+function calcSign(clientId, access_token, secret, timestamp){
+    const str = clientId + access_token + timestamp;
+    const hash = CryptoJS.HmacSHA256(str, secret);
+    const hashInBase64 = hash.toString();
+    const signUp = hashInBase64.toUpperCase();
+    return signUp;
+}
+
+// 電流データの取得
+const data_headers = {
+    client_id: "mnytrtcna0j4uh0urkur",
+    access_token: "",//最新のアクセストークンで行うこと
+    sign: "",
+    t: 0,
+    sign_method: "HMAC-SHA256"
+};
