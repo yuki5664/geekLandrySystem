@@ -22,12 +22,23 @@ function getTime(){
 }
 
 // headerの値を取得する
-function getHeaders() {
+function getHeaders1() {
     const timestamp = getTime();
     const secret = "117ffe6d7b25413d8dad20f262c1a197";
     const clientId = headers.client_id;
     const access_token = headers.access_token;
     const sign = calcSign(clientId, access_token, secret, timestamp);
+    headers.sign = sign;
+    headers.t = timestamp;
+    return headers
+}
+
+function getHeaders2(access_token) {
+    const timestamp = getTime();
+    const secret = "117ffe6d7b25413d8dad20f262c1a197";
+    const clientId = headers.client_id;
+    const sign = calcSign(clientId, access_token, secret, timestamp);
+    headers.access_token = access_token;
     headers.sign = sign;
     headers.t = timestamp;
     return headers
@@ -47,15 +58,12 @@ async function getAccesstokenApi() {
     let AccessTokenUrl = 'https://openapi.tuyaus.com/v1.0/token?grant_type=1';
     let options = {
         method: 'GET',
-        headers: getHeaders(),
+        headers: getHeaders1(),
     }
-    
     var res = await fetch(AccessTokenUrl, options);
     var responseBody = await res.json();
-
     const access_token = await responseBody.result.access_token;
     // const sign = calcSign(clientId, access_token, secret, timestamp)
-
     console.log(`このAPIから帰ってきたトークンは${access_token}です`);
     return access_token
 }
@@ -66,7 +74,7 @@ async function getDateApi() {
     let AccessTokenUrl = 'https://openapi.tuyaus.com/v1.0/devices/eb81d3d6ba9e2fbc75hdyr';
     let options = {
         method: 'GET',
-        headers: getHeaders(access_token),
+        headers: getHeaders2(access_token),
     }
     
     let res = await fetch(AccessTokenUrl, options);
@@ -75,7 +83,3 @@ async function getDateApi() {
 }
 
 getDateApi();
-
-
-
-
