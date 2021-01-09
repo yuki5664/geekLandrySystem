@@ -69,7 +69,7 @@ async function getAccesstokenApi() {
 }
 
 // 電流データ用のAPIを叩き電流データを取得
-async function getDateApi() {
+exports.handler = async function getDateApi() {
     const access_token = await getAccesstokenApi();
     let AccessTokenUrl = 'https://openapi.tuyaus.com/v1.0/devices/eb81d3d6ba9e2fbc75hdyr';
     let options = {
@@ -82,4 +82,3 @@ async function getDateApi() {
     let status = await responseBody.result.status[3].value
     console.log(status);
 }
-getDateApi();
