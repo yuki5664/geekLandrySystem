@@ -79,7 +79,7 @@ async function getDateApi() {
     
     let res = await fetch(AccessTokenUrl, options);
     let responseBody = await res.json();
-    console.log(responseBody);
+    let status = await responseBody.result.status[3].value
+    console.log(status);
 }
-
 getDateApi();
