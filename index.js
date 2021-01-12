@@ -26,7 +26,7 @@ function getHeaders1() {
     const timestamp = getTime();
     const secret = "117ffe6d7b25413d8dad20f262c1a197";
     const clientId = headers.client_id;
-    const access_token = headers.access_token;
+    const access_token = "";
     const sign = calcSign(clientId, access_token, secret, timestamp);
     headers.sign = sign;
     headers.t = timestamp;
@@ -81,4 +81,5 @@ exports.handler = async function getDateApi() {
     let responseBody = await res.json();
     let status = await responseBody.result.status[3].value
     console.log(status);
+    return status;
 }
