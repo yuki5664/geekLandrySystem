@@ -1,6 +1,11 @@
-// const https = require('https');
 const fetch = require('node-fetch');
 const CryptoJS = require('crypto-js');
+const clientId = process.env.IOT_CLIENT_ID;
+const secret = process.env.IOT_SECRET;
+const AWS = require('aws-sdk');
+const dynamoDB = new AWS.DynamoDB.DocumentClient({
+  region: process.env.AWS_REGION_NAME // DynamoDBのリージョン
+});
 
 
 // TODO: 2時間に一回、アクセストークンを取得する
@@ -8,7 +13,7 @@ const CryptoJS = require('crypto-js');
 
 // headersを定義する
 const headers = {
-    client_id: "mnytrtcna0j4uh0urkur",
+    client_id: clientId,
     sign: "",
     access_token: "",
     t: 0,
@@ -24,7 +29,6 @@ function getTime(){
 // headerの値を取得する
 function getHeaders1() {
     const timestamp = getTime();
-    const secret = "117ffe6d7b25413d8dad20f262c1a197";
     const clientId = headers.client_id;
     const access_token = "";
     const sign = calcSign(clientId, access_token, secret, timestamp);
@@ -35,7 +39,6 @@ function getHeaders1() {
 
 function getHeaders2(access_token) {
     const timestamp = getTime();
-    const secret = "117ffe6d7b25413d8dad20f262c1a197";
     const clientId = headers.client_id;
     const sign = calcSign(clientId, access_token, secret, timestamp);
     headers.access_token = access_token;
@@ -64,12 +67,11 @@ async function getAccesstokenApi() {
     var responseBody = await res.json();
     const access_token = await responseBody.result.access_token;
     // const sign = calcSign(clientId, access_token, secret, timestamp)
-    console.log(`このAPIから帰ってきたトークンは${access_token}です`);
     return access_token
 }
 
 // 電流データ用のAPIを叩き電流データを取得
-exports.handler = async function getDateApi() {
+async function getDateApi() {
     const access_token = await getAccesstokenApi();
     let AccessTokenUrl = 'https://openapi.tuyaus.com/v1.0/devices/eb81d3d6ba9e2fbc75hdyr';
     let options = {
@@ -83,3 +85,30 @@ exports.handler = async function getDateApi() {
     console.log(status);
     return status;
 }
+
+exports.handler = async event => {
+  // 一意な値を作るためにタイムスタンプを取得
+    const created_at = Number(Date.now());
+    const { message } = event;
+    const status = await getDateApi();
+
+    const params = {
+        TableName: "geekLaundrySystem",
+        Item: {
+            "id": created_at,
+            "data": status, //電流のデータ
+            },
+    };
+    try {
+        const result = await dynamoDB.put(params).promise();
+        return {
+        statusCode: 200,
+        body: JSON.stringify(result),
+        };
+    } catch (error) {
+        return {
+        statusCode: error.statusCode,
+        body: error.message,
+        };
+    }
+};
