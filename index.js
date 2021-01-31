@@ -26,7 +26,7 @@ function getHeaders1() {
     const timestamp = getTime();
     const secret = "117ffe6d7b25413d8dad20f262c1a197";
     const clientId = headers.client_id;
-    const access_token = headers.access_token;
+    const access_token = "";
     const sign = calcSign(clientId, access_token, secret, timestamp);
     headers.sign = sign;
     headers.t = timestamp;
@@ -69,7 +69,7 @@ async function getAccesstokenApi() {
 }
 
 // 電流データ用のAPIを叩き電流データを取得
-async function getDateApi() {
+exports.handler = async function getDateApi() {
     const access_token = await getAccesstokenApi();
     let AccessTokenUrl = 'https://openapi.tuyaus.com/v1.0/devices/eb81d3d6ba9e2fbc75hdyr';
     let options = {
@@ -81,5 +81,5 @@ async function getDateApi() {
     let responseBody = await res.json();
     let status = await responseBody.result.status[3].value
     console.log(status);
+    return status;
 }
-getDateApi();
