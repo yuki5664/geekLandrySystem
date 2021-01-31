@@ -10,6 +10,17 @@
   "description": "hogehoge",
   "private": true,
   "dependencies": {
-    "crypto-js": "^4.0.0"
-  }
+    "aws-sdk": "^2.831.0",
+    "crypto-js": "^4.0.0",
+    "node-fetch": "^2.6.1"
+  },
+  "devDependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/yuki5664/geekLandrySystem.git"
+  },
+  "bugs": {
+    "url": "https://github.com/yuki5664/geekLandrySystem/issues"
+  },
+  "homepage": "https://github.com/yuki5664/geekLandrySystem#readme"
 }
