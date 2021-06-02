@@ -89,14 +89,17 @@ async function getDateApi() {
 exports.handler = async event => {
   // 一意な値を作るためにタイムスタンプを取得
     const created_at = Number(Date.now());
+    const timestamp = Math.floor(created_at / 1000);
     const { message } = event;
     const status = await getDateApi();
 
     const params = {
         TableName: "geekLaundrySystem",
         Item: {
+            "type": "data",
             "id": created_at,
             "data": status, //電流のデータ
+            "timestamp": timestamp,
             },
     };
     try {
